@@ -1,10 +1,12 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const CopyPlugin  = require('copy-webpack-plugin')
 
 module.exports = {
     mode: 'development',
-    entry: './index.jsx',
+    entry: ['babel-polyfill','./index.jsx'],
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
@@ -13,6 +15,7 @@ module.exports = {
     devtool: 'inline-source-map',
     devServer: {
         contentBase: '.dist',
+        open: true,
         resolve: {
             extensions: ['.jsx', '.js']
         },
@@ -22,7 +25,11 @@ module.exports = {
             title: "Webpack App",
             template: path.join(__dirname, 'src', 'index.html')
         }),
-        new MiniCssExtractPlugin()
+        new CleanWebpackPlugin(),
+        new MiniCssExtractPlugin({
+            filename: 'style.css'
+        }),
+
     ],
     module: {
         rules: [
@@ -52,7 +59,15 @@ module.exports = {
             {
                 test: /\.(woff|woff2|ttf)$/,
                 type: 'asset/resource'
-            }
+            },
+            {
+                test: /\.(png|svg|giv|jpg)$/,
+                use: ['file-loader']
+            },
+            {
+                test: /\.(ttf|woff|woff2)$/,
+                use: ['file-loader']
+            },
         ]
     }
 }
