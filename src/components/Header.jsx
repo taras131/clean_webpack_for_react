@@ -4,9 +4,6 @@ const Header = () => {
     return (
         <header className="d-flex justify-between align-center p-40">
             <div className="d-flex leftHeader">
-                <div className="logo">
-
-                </div>
                 <div className="headerInfo">
                     <h3>Questionnaire</h3>
                     <p>answer ten questions</p>
