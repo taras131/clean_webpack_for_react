@@ -1,3 +1,3 @@
-this is a questionnaire written in React & Redux
-use libraries: axios, redux-react, redux-thunk,
+this is a questionnaire written in React
+use libraries: axios, redux, redux-react, redux-thunk,
 use Api:"https://opentdb.com"
