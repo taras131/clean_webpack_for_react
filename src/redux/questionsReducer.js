@@ -30,7 +30,6 @@ export const setIsLoading = (payload) => ({type: SET_IS_LOADING, payload})
 export const setCurrentQuestionNumber = () => ({type: SET_CURRENT_QUESTION_NUMBER})
 export const addAnswer = (answer) => ({type: ADD_ANSWER, answer})
 export const getQuestions = () => async (dispatch) =>{
-    console.log("getQuestions")
     dispatch(setIsLoading(true))
     const response = await questionsAPI.getQuestions()
     if(response.response_code === 0) {

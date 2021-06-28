@@ -2,35 +2,41 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
-const CopyPlugin  = require('copy-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+
 
 module.exports = {
     mode: 'development',
-    entry: ['babel-polyfill','./index.jsx'],
+    entry: ['babel-polyfill', './index.jsx'],
     output: {
-        filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
-
+        filename: "[name].[hash].js",
     },
     devtool: 'inline-source-map',
     devServer: {
-        contentBase: '.dist',
+        contentBase: path.join(__dirname, 'dist'),
+        compress: true,
         open: true,
-        resolve: {
-            extensions: ['.jsx', '.js']
-        },
+        port: 9000,
+
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: "Webpack App",
             template: path.join(__dirname, 'src', 'index.html')
         }),
         new CleanWebpackPlugin(),
         new MiniCssExtractPlugin({
             filename: 'style.css'
         }),
-
+        new CopyPlugin({
+            patterns: [
+                {
+                    from: path.resolve(__dirname, 'src/images'),
+                    to: path.resolve(__dirname, 'dist/images')
+                }
+            ]
+        }),
     ],
     module: {
         rules: [
@@ -54,15 +60,22 @@ module.exports = {
                 use: [MiniCssExtractPlugin.loader, 'css-loader']
             },
             {
-                test: /\.(png|svg|giv|jpef)$/,
-                type: 'asset/resource'
+                test: /\.s[ac]ss$/i,
+                use: [
+                    // Creates `style` nodes from JS strings
+                    MiniCssExtractPlugin.loader,
+                    // Translates CSS into CommonJS
+                    "css-loader",
+                    // Compiles Sass to CSS
+                    "sass-loader",
+                ],
             },
             {
                 test: /\.(woff|woff2|ttf)$/,
                 type: 'asset/resource'
             },
             {
-                test: /\.(png|svg|giv|jpg)$/,
+                test: /\.(png|svg|giv|jpg|jpeg|gif)$/,
                 use: ['file-loader']
             },
             {

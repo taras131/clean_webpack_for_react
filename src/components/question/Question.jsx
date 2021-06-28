@@ -1,7 +1,10 @@
 import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {getCurrentQuestion} from "../redux/questionsSelector.js";
-import {addAnswer, setCurrentQuestionNumber} from "../redux/questionsReducer.js";
+import {getCurrentQuestion} from "../../redux/questionsSelector.js";
+import {addAnswer, setCurrentQuestionNumber} from "../../redux/questionsReducer.js";
+import rightArrow from "../../images/right-arrow.png"
+import {ResponseOptions} from "./ResponseOptions.jsx";
+import {resetMessageInfo, setMessageInfo} from "../../redux/messageReducer";
 
 export const Question = ({currentQuestionNumber}) => {
     const [choice, setChoice] = useState([])
@@ -30,6 +33,15 @@ export const Question = ({currentQuestionNumber}) => {
             }))
             dispatch(setCurrentQuestionNumber())
             setChoice([])
+            if(isCorrectAnswer) {
+                dispatch(resetMessageInfo())
+                dispatch(setMessageInfo("This is the correct answer", true))
+            } else {
+                dispatch(resetMessageInfo())
+                dispatch(setMessageInfo("This is the wrong answer"))
+            }
+        } else {
+            dispatch(setMessageInfo("You didn't choose an answer"))
         }
     }
     const onInputChange = (e) => {
@@ -46,31 +58,27 @@ export const Question = ({currentQuestionNumber}) => {
         })
     }
     const responseOptionsInputs = responseOptions.map((item, index) => {
-        return <label key={`${index}_${item}`} className="d-flex align-center">
-            <input
-                className = "checkbox"
-                type={correctAnswerList.length > 1 ? "checkbox" : "radio"}
-                checked={choice.indexOf(item) === -1 ? false : true}
-                name={item}
-                value={item}
-                onChange={onInputChange}/>
-            <span className="checkboxStyle"></span>
-            <span className="labelText">{item.replaceAll("&#039;", "")}</span>
-        </label>
-
-    })
+        return <ResponseOptions key={`${index}_${item}`}
+                                item={item}
+                                correctAnswerList={correctAnswerList}
+                                choice={choice}
+                                onInputChange = {onInputChange} />
+            })
     return (
-        <div className="d-flex direction-column align-center">
+        <div className="questions d-flex direction-column align-center p-40">
             <div style={{width: '100%'}} className="d-flex justify-around align-center">
-                <h1>Question №{currentQuestionNumber + 1}</h1>
-                <h3 style={{marginLeft: 20}}>Difficulty: {currentQuestion.difficulty}</h3>
+                <h1>Question № <b>{currentQuestionNumber + 1}</b></h1>
+                <h2 style={{marginLeft: 20}}>Difficulty: <b>{currentQuestion.difficulty}</b></h2>
             </div>
-            <h3>{currentQuestion.question.replaceAll("&quot;","").replaceAll("&shy","")}</h3>
-            <form className="d-flex direction-column">
+            <h3 style={{marginTop: 40}}>{currentQuestion.question}</h3>
+            <form className="form d-flex direction-column align-start">
                 {responseOptionsInputs}
             </form>
 
-            <button onClick={onAnswerClick}>Answer</button>
+            <button className="answerButton" onClick={onAnswerClick}>
+                Answer
+                <img width={35} height={35} src={rightArrow} alt="rightArrow"/>
+            </button>
         </div>
     )
 }
